@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  nextjs:
+    container_name: jewellery-nextjs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - 3000:3000
+
+  elasticsearch:
+    container_name: jewellery-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+    volumes:
+      - jewellery-elasticsearch-store:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+
+volumes:
+  jewellery-elasticsearch-store:
