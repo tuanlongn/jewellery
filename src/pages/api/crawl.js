@@ -1,25 +1,52 @@
 import axios from "axios";
 import cheerio from "cheerio";
+import { Client } from "@elastic/elasticsearch";
+
+const client = new Client({ node: "http://elasticsearch:9200" });
+
+const indexKey = "products";
 
 const sources = {
-  GOLD_10K:
-    "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
-  GOLD_14K:
-    "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
-  GOLD_18K:
-    "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
-  GOLD_22K:
-    "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
-  GOLD_24K:
-    "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
+  age: {
+    "10k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
+    "14k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
+    "18k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
+    "22k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
+    "24k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
+  },
+  color: {
+    Đỏ:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20038",
+    Trắng:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20039",
+    Vàng:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20040",
+    Hồng:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20040",
+  },
+  type: {
+    Ruby:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-10137000-13767000-VND_46-69324",
+    Sapphire:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-10137000-13767000-VND_46-69325",
+    Topaz:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-10137000-13767000-VND_46-69326",
+    Diamond:
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-10137000-13767000-VND_46-405272",
+  },
 };
 
 export default (req, res) => {
   return new Promise((resolve) => {
-    fetchData()
+    indexData()
       .then((html) => {
         res.statusCode = 200;
-        res.json({});
+        res.json({ success: true });
         resolve();
       })
       .catch((err) => {
@@ -31,23 +58,60 @@ export default (req, res) => {
   });
 };
 
-const fetchData = async () => {
-  Object.keys(sources).forEach(async (key) => {
-    const url = sources[key];
-    const response = await axios(url);
-    const $ = cheerio.load(response.data, { decodeEntities: false });
+const indexData = async () => {
+  let count = 0;
+  Object.keys(sources).forEach((attr) => {
+    Object.keys(sources[attr]).forEach(async (key) => {
+      const url = sources[attr][key];
+      let data = [];
+      let result = await crawlData(url);
+      data = data.concat(result.data);
+      while (result.next) {
+        result = await crawlData(result.next);
+        data = data.concat(result.data);
+      }
 
-    const productItems = $(".product-item");
-    let i = 1;
-    productItems.each(() => {
-      const item = $(".product-container > a", this);
-      console.log("age", key);
-      console.log("name", item.attr("title"));
-      console.log("price", item.attr("data-price"));
-      i++;
+      data.forEach(async (item) => {
+        await client.index({
+          index: indexKey,
+          id: item.id,
+          body: {
+            [attr]: key,
+            ...item,
+          },
+        });
+        count++;
+        console.log(`indexed ${count} id: ${item.id}`);
+      });
     });
-    console.log(".....", i);
+  });
+  return null;
+};
+
+const crawlData = async (url) => {
+  let data = [];
+  const response = await axios(url);
+  const $ = cheerio.load(response.data, { decodeEntities: false });
+
+  const productItems = $(".product-item");
+  productItems.each((i, elm) => {
+    const item = $(elm).find($(".product-container > a"));
+    const img = $(elm).find($(".product-image > a > img"));
+
+    data.push({
+      id: item.attr("data-id"),
+      title: item.attr("title"),
+      price: item.attr("data-price"),
+      image: img.attr("data-src"),
+    });
   });
 
-  return null;
+  let next = null;
+  const pagination = $(".ty-pagination__selected").next();
+  if (pagination.length) {
+    next = pagination.attr("href");
+  }
+
+  console.log(`crawled data: ${data.length} - next: ${next}`);
+  return { data, next };
 };
