@@ -20,6 +20,11 @@
     "less": "^3.12.2",
     "next": "9.5.2",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-image": "^4.0.3",
+    "react-number-format": "^4.4.1",
+    "react-resize-detector": "^5.0.7",
+    "react-visibility-sensor": "^5.1.1",
+    "swr": "^0.3.0"
   }
 }

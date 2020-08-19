@@ -1,0 +1,72 @@
+@import "../../styles/antd.less";
+
+.header {
+  background-color: white;
+  height: 180px;
+  margin-bottom: 20px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .logo {
+    background-image: url("/images/logo.png");
+    background-repeat: no-repeat;
+    width: 230px;
+    height: 85px;
+  }
+}
+
+.page {
+  margin: 0 auto;
+}
+
+.footer {
+  margin-top: 60px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+
+    ul {
+      list-style: none;
+      padding: 0px;
+      display: flex;
+      flex-direction: row;
+      flex-grow: 1;
+
+      li {
+        margin-right: 40px;
+        width: 180px;
+
+        h5 {
+          font-size: 1rem;
+          border-bottom: solid 1px @border-color-base;
+        }
+      }
+    }
+
+    .social-network {
+      width: 300px;
+      // background-color: gray;
+    }
+  }
+
+  .copyright {
+    width: 100%;
+    margin-top: 40px;
+    padding: 20px;
+    border-top: solid 1px @border-color-base;
+    background-color: @border-radius-base;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

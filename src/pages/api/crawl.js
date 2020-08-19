@@ -7,18 +7,18 @@ const client = new Client({ node: "http://elasticsearch:9200" });
 const indexKey = "products";
 
 const sources = {
-  age: {
-    "10k":
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
-    "14k":
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
-    "18k":
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
-    "22k":
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
-    "24k":
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
-  },
+  // age: {
+  //   "10k":
+  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
+  //   "14k":
+  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
+  //   "18k":
+  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
+  //   "22k":
+  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
+  //   "24k":
+  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
+  // },
   color: {
     Đỏ:
       "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20038",
@@ -27,7 +27,7 @@ const sources = {
     Vàng:
       "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20040",
     Hồng:
-      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20040",
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_57-19940",
   },
   type: {
     Ruby:
@@ -81,7 +81,7 @@ const indexData = async () => {
           },
         });
         count++;
-        console.log(`indexed ${count} id: ${item.id}`);
+        console.log(`indexed ${count} id: ${item.id}, ${attr} ${key}`);
       });
     });
   });
@@ -98,11 +98,15 @@ const crawlData = async (url) => {
     const item = $(elm).find($(".product-container > a"));
     const img = $(elm).find($(".product-image > a > img"));
 
+    let category = item.attr("data-category")?.split("/") || [""];
+    category = category.length > 0 ? category[1] : category[0];
+
     data.push({
       id: item.attr("data-id"),
       title: item.attr("title"),
-      price: item.attr("data-price"),
+      price: parseInt(item.attr("data-price")),
       image: img.attr("data-src"),
+      category,
     });
   });
 
