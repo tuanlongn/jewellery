@@ -7,7 +7,7 @@ import "./styles.less";
 
 const ProductListSkeleton = ({}) => {
   return (
-    <Row gutter={[10, 10]}>
+    <Row gutter={[4, 4]}>
       {Array.from(Array(12), (_, i) => i + 1).map((i) => (
         <Col key={i} xs={12} sm={8} md={6}>
           <ReactResizeDetector handleWidth>

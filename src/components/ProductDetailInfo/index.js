@@ -1,5 +1,7 @@
 import React from "react";
-import { Space, Button } from "antd";
+import NumberFormat from "react-number-format";
+import { Space, Button, Rate } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 
 import "./styles.less";
 //-----------------------------------------------
@@ -8,10 +10,24 @@ const ProductDetailInfo = ({ title, price, addToCart, buyNow }) => {
   return (
     <div className="product-detail-info">
       <h4>{title}</h4>
-      <div className="price">{price}</div>
+      <Rate defaultValue={3} />
+      <div className="price">
+        <NumberFormat
+          value={price}
+          displayType={"text"}
+          thousandSeparator="."
+          decimalSeparator=","
+          suffix=" ₫"
+        />
+      </div>
 
       <Space>
-        <Button type="primary" shape="round" size="large" onClick={addToCart}>
+        <Button
+          shape="round"
+          size="large"
+          icon={<ShoppingCartOutlined />}
+          onClick={addToCart}
+        >
           Thêm vào giỏ hàng
         </Button>
         <Button type="danger" shape="round" size="large" onClick={buyNow}>

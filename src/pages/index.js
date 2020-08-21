@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import NumberFormat from "react-number-format";
 import {
   Row,
   Col,
@@ -16,6 +17,7 @@ import {
   Divider,
   Tag,
 } from "antd";
+import { signIn, signOut, useSession } from "next-auth/client";
 
 import { useFilterProducts } from "../common/hooks";
 import { slugify } from "../common/utils";
@@ -27,12 +29,38 @@ import Layout from "../components/Layout";
 import EmptyResult from "../components/EmptyResult";
 //-----------------------------------------------
 
+const AGE_VALUES = {
+  "10k": "Vàng 10K",
+  "14k": "Vàng 14K",
+  "18k": "Vàng 18K",
+  "22k": "Vàng 22K",
+  "24k": "Vàng 24K",
+};
+
+const TYPE_VALUES = {
+  Ruby: "Đá Ruby",
+  Sapphire: "Đá Sapphire",
+  Topaz: "Đá Topaz",
+};
+
+const COLOR_VALUES = {
+  Trắng: "Màu trắng",
+  Hồng: "Màu hồng",
+  Vàng: "Màu vàng",
+  Đỏ: "Màu đỏ",
+};
+
 export default function Home({ data }) {
+  const [session, loading] = useSession();
+  console.log("session", session);
+
   const {
     products: filterProducts,
+    pagination,
     isLoading,
     filters,
     setFilters,
+    setPage,
   } = useFilterProducts();
 
   const products = useMemo(() => {
@@ -42,38 +70,39 @@ export default function Home({ data }) {
     return data;
   }, [filterProducts]);
 
+  const handleRemoveFilterValue = (attr, value) => {
+    const values = filters[attr];
+    values.splice(values.indexOf(value), 1);
+    setFilters({ ...filters, [attr]: values });
+  };
+
   return (
     <Layout title="Vàng bạc, trang sức & đá quý">
+      {!session && (
+        <>
+          Not signed in <br />
+          <button onClick={signIn}>Sign in</button>
+        </>
+      )}
+
       <Row>
         <Space>
           <Filter
             label="Tuổi vàng"
-            values={{
-              "10k": "Vàng 10K",
-              "14k": "Vàng 14K",
-              "18k": "Vàng 18K",
-              "22k": "Vàng 22K",
-              "24k": "Vàng 24K",
-            }}
+            values={AGE_VALUES}
+            selected={filters.age}
             onChange={(values) => setFilters({ ...filters, age: values })}
           />
           <Filter
             label="Loại đá"
-            values={{
-              Ruby: "Đá Ruby",
-              Sapphire: "Đá Sapphire",
-              Topaz: "Đá Topaz",
-            }}
+            values={TYPE_VALUES}
+            selected={filters.type}
             onChange={(values) => setFilters({ ...filters, type: values })}
           />
           <Filter
             label="Màu sắc"
-            values={{
-              Trắng: "Màu trắng",
-              Hồng: "Màu hồng",
-              Vàng: "Màu vàng",
-              Đỏ: "Màu đỏ",
-            }}
+            values={COLOR_VALUES}
+            selected={filters.color}
             onChange={(values) => setFilters({ ...filters, color: values })}
           />
 
@@ -83,21 +112,78 @@ export default function Home({ data }) {
           />
         </Space>
       </Row>
-      <br />
-      <Row>
+
+      <Row style={{ marginTop: 15, marginBottom: 15 }}>
         {Object.keys(filters).length > 0 && (
           <>
-            <span>Lọc dữ liệu:</span>
+            <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
             {Object.keys(filters).map((attr) => {
               if (["age", "type", "color"].indexOf(attr) !== -1) {
-                return filters[attr].map((v) => <Tag key={v}>{v}</Tag>);
+                return filters[attr].map((v) => (
+                  <Tag
+                    key={v}
+                    closable
+                    onClose={() => handleRemoveFilterValue(attr, v)}
+                  >
+                    {attr === "age" && AGE_VALUES[v]}
+                    {attr === "type" && TYPE_VALUES[v]}
+                    {attr === "color" && COLOR_VALUES[v]}
+                  </Tag>
+                ));
+              }
+
+              if (attr === "price") {
+                let components = [];
+                if (filters.price[0]) {
+                  components.push(
+                    <Tag
+                      key={`${attr}-from`}
+                      closable
+                      onClose={() =>
+                        handleRemoveFilterValue(attr, filters.price[0])
+                      }
+                    >
+                      Giá từ{" "}
+                      {
+                        <NumberFormat
+                          value={filters.price[0]}
+                          displayType={"text"}
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          suffix=" ₫"
+                        />
+                      }
+                    </Tag>
+                  );
+                }
+                if (filters.price[1]) {
+                  components.push(
+                    <Tag
+                      key={`${attr}-to`}
+                      closable
+                      onClose={() =>
+                        handleRemoveFilterValue(attr, filters.price[1])
+                      }
+                    >
+                      Giá đến{" "}
+                      {
+                        <NumberFormat
+                          value={filters.price[1]}
+                          displayType={"text"}
+                          thousandSeparator="."
+                          decimalSeparator=","
+                          suffix=" ₫"
+                        />
+                      }
+                    </Tag>
+                  );
+                }
+                return components;
               }
             })}
           </>
         )}
       </Row>
-
-      <Divider />
 
       <div className="product-list">
         {isLoading ? (
@@ -106,7 +192,7 @@ export default function Home({ data }) {
           <>
             {products.length > 0 ? (
               <>
-                <Row gutter={[10, 10]}>
+                <Row gutter={[4, 4]}>
                   {products.map((p) => (
                     <Col xs={12} sm={8} md={6} key={p.id}>
                       <Link
@@ -134,7 +220,14 @@ export default function Home({ data }) {
                         marginTop: 20,
                       }}
                     >
-                      <Pagination defaultCurrent={1} total={50} />
+                      <Pagination
+                        defaultCurrent={pagination?.currentPage || 1}
+                        total={pagination?.total}
+                        pageSize={24}
+                        responsive={true}
+                        showSizeChanger={false}
+                        onChange={(page) => setPage(page)}
+                      />
                     </div>
                   </Col>
                 </Row>

@@ -7,18 +7,18 @@ const client = new Client({ node: "http://elasticsearch:9200" });
 const indexKey = "products";
 
 const sources = {
-  // age: {
-  //   "10k":
-  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
-  //   "14k":
-  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
-  //   "18k":
-  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
-  //   "22k":
-  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
-  //   "24k":
-  //     "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
-  // },
+  age: {
+    "10k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",
+    "14k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19976",
+    "18k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19977",
+    "22k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-117778",
+    "24k":
+      "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19978",
+  },
   color: {
     Đỏ:
       "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=8-6773000-13767000-VND_41-20038",
@@ -72,16 +72,38 @@ const indexData = async () => {
       }
 
       data.forEach(async (item) => {
-        await client.index({
+        const { body } = await client.exists({
           index: indexKey,
           id: item.id,
-          body: {
-            [attr]: key,
-            ...item,
-          },
         });
+        if (body) {
+          await client.update({
+            index: indexKey,
+            id: item.id,
+            body: {
+              doc: {
+                [attr]: key,
+                ...item,
+              },
+            },
+          });
+        } else {
+          await client.index({
+            index: indexKey,
+            id: item.id,
+            body: {
+              [attr]: key,
+              ...item,
+            },
+          });
+        }
+
         count++;
-        console.log(`indexed ${count} id: ${item.id}, ${attr} ${key}`);
+        console.log(
+          `${body ? "updated" : "indexed"} ${count} id: ${
+            item.id
+          }, ${attr} ${key}`
+        );
       });
     });
   });

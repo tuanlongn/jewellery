@@ -25,8 +25,9 @@ const ProductItem = ({ title, image, price }) => {
                 <NumberFormat
                   value={price}
                   displayType={"text"}
-                  thousandSeparator={true}
-                  suffix="đ"
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  suffix=" ₫"
                 />
               </div>
             </div>

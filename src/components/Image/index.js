@@ -13,6 +13,7 @@ const Image = ({ src, alt }) => {
         className="image"
         src={src}
         alt={alt}
+        crossOrigin="anonymous"
         loader={
           <div className="skeleton-image">
             <Skeleton.Image />

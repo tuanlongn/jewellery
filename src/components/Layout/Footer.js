@@ -22,12 +22,12 @@ const Footer = ({ width }) => {
           <li>
             <div className="">
               <h5>Cẩm nang mua sắm</h5>
-              <p>Hướng dẫn mua hàng</p>
-              <p>Hướng dẫn thanh toán</p>
-              <p>Mua hàng trả góp</p>
-              <p>Phương thức vận chuyển</p>
-              <p>Hướng dẫn sử dụng/ bảo quản trang sức</p>
-              <p>Chương trình khách hàng thân thiết</p>
+              <p>Trang sức theo ngày sinh</p>
+              <p>Trang sức theo phong thuỷ</p>
+              <p>Trang sức Kim Cương</p>
+              <p>Trang sức Ngọc Trai</p>
+              <p>Trang sức Đá Quý</p>
+              <p>Trang sức Đồng Hồ</p>
             </div>
           </li>
           <li>

@@ -1,17 +1,14 @@
 import React, { useState, useMemo } from "react";
 import NumberFormat from "react-number-format";
-import { Dropdown, Card, Slider, Divider, Input } from "antd";
-import {
-  DownOutlined,
-  CheckSquareFilled,
-  CheckSquareOutlined,
-} from "@ant-design/icons";
+import { Dropdown, Card, Slider, Input } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 import "./styles.less";
 //-----------------------------------------------
 
 const FilterRange = ({ label, onChange }) => {
-  const [range, setRange] = useState([2000000, 10000000]);
+  const [range, setRange] = useState([2000000, 100000000]);
+  const [visible, setVisible] = useState(false);
 
   const handleChange = (value) => {
     setRange(value);
@@ -24,7 +21,7 @@ const FilterRange = ({ label, onChange }) => {
   };
 
   const list = (
-    <Card className="range-box">
+    <Card className="range-box" onMouseLeave={() => setVisible(false)}>
       <Slider
         className="slider"
         range
@@ -38,8 +35,9 @@ const FilterRange = ({ label, onChange }) => {
           <NumberFormat
             value={value}
             displayType={"text"}
-            thousandSeparator={true}
-            suffix="đ"
+            thousandSeparator="."
+            decimalSeparator=","
+            suffix=" ₫"
           />
         )}
       />
@@ -68,8 +66,9 @@ const FilterRange = ({ label, onChange }) => {
     <Dropdown.Button
       icon={<DownOutlined />}
       overlay={list}
-      // visible={true}
       placement="bottomRight"
+      visible={visible}
+      onVisibleChange={() => setVisible(true)}
     >
       <div className="label">{label}</div>
     </Dropdown.Button>

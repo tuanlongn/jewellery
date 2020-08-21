@@ -7,16 +7,17 @@ const indexKey = "products";
 
 export default (req, res) => {
   const { query } = req;
+  const page = query["page"] ? parseInt(query["page"]) : 0;
   const filters = {};
   Object.keys(query).forEach((key) => {
     filters[key] = query[key].split(",");
   });
 
   return new Promise((resolve) => {
-    fetchDataWithDelay({ filters })
+    fetchDataWithDelay({ filters, page })
       .then((data) => {
         res.statusCode = 200;
-        res.json({ data, pagination: {} });
+        res.json(data);
         resolve();
       })
       .catch((err) => {
@@ -28,12 +29,15 @@ export default (req, res) => {
   });
 };
 
-const fetchDataWithDelay = async ({ filters }) => {
-  const [data, _] = await Promise.all([fetchData({ filters }), sleep(1500)]);
+const fetchDataWithDelay = async ({ filters, page }) => {
+  const [data, _] = await Promise.all([
+    fetchData({ filters, page }),
+    sleep(1000),
+  ]);
   return data;
 };
 
-const fetchData = async ({ filters }) => {
+const fetchData = async ({ filters, page }) => {
   let q = [];
   // price range
   if (filters.price) {
@@ -80,19 +84,38 @@ const fetchData = async ({ filters }) => {
 
   console.log("q___", JSON.stringify(q));
 
+  const pageSize = 24;
+
   const { body } = await client.search({
     index: indexKey,
-    from: 0,
-    size: 20,
+    from: page > 1 ? (page - 1) * pageSize : 0,
+    size: pageSize,
     body: {
       query: {
         bool: {
           must: q,
         },
       },
+      sort: [
+        {
+          price: {
+            mode: "avg",
+            order: "asc",
+          },
+        },
+      ],
     },
   });
 
   const data = body?.hits?.hits.map((item) => item._source) || [];
-  return data;
+  const total = body?.hits?.total?.value || 0;
+  const totalPage = Math.ceil(total / pageSize);
+  return {
+    data,
+    pagination: {
+      total,
+      totalPage,
+      currentPage: page,
+    },
+  };
 };
