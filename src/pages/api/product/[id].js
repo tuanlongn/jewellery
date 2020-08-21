@@ -1,6 +1,12 @@
 import { Client } from "@elastic/elasticsearch";
 
-const client = new Client({ node: "http://elasticsearch:9200" });
+const client = new Client({
+  node: process.env.ELASTICSEARCH_ENDPOINT,
+  auth: {
+    username: process.env.ELASTICSEARCH_USERNAME,
+    password: process.env.ELASTICSEARCH_PASSWORD,
+  },
+});
 
 const indexKey = "products";
 

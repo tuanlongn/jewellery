@@ -10,7 +10,7 @@ import Footer from "./Footer";
 import "./styles.less";
 //-----------------------------------------------
 
-const MainLayout = ({ title, cart, children, onCartUpdate }) => {
+const MainLayout = ({ title, cart, children }) => {
   const { width } = useContainerSize();
 
   return (
@@ -24,7 +24,7 @@ const MainLayout = ({ title, cart, children, onCartUpdate }) => {
       </Head>
 
       <Layout>
-        <Header width={width} cart={cart} onCartUpdate={onCartUpdate} />
+        <Header width={width} cart={cart} />
         <Content className="page" style={{ width }}>
           {children}
         </Content>

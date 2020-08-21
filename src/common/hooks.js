@@ -101,3 +101,45 @@ export const useContainerSize = () => {
 
   return { breakpoints, width };
 };
+
+export const useCart = () => {
+  const initialValue = { items: {} };
+  const [cart, setCartValue] = useLocalStorage("cart", initialValue);
+
+  const items = useMemo(() => {
+    if (cart?.items) {
+      return Object.values(cart.items);
+    }
+    return [];
+  }, [cart]);
+
+  const updateItem = (pid, quantity) => {
+    // change
+    if (quantity > 0) {
+      cart.items[pid].quantity = quantity;
+    }
+    // remove item
+    if (quantity === 0) {
+      delete cart.items[pid];
+    }
+    setCartValue(cart);
+  };
+
+  const addItem = (item, quantity) => {
+    if (cart.items[item.id]) {
+      cart.items[item.id].quantity += quantity;
+    } else {
+      cart.items[item.id] = {
+        ...item,
+        quantity: quantity,
+      };
+    }
+    setCartValue(cart);
+  };
+
+  return {
+    items,
+    updateItem,
+    addItem,
+  };
+};

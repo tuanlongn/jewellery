@@ -1,6 +1,6 @@
 @import "../../styles/antd.less";
 
-.cart-item {
+.cart-popup-item {
   width: 280px;
   padding: 5px 0px;
   overflow: hidden;
@@ -10,7 +10,7 @@
     flex-direction: row;
 
     .image {
-      width: auto;
+      width: 100px;
       height: 70px;
       border: solid 1px @border-color-base;
     }
@@ -21,13 +21,15 @@
       white-space: normal;
       margin-left: 10px;
       overflow: hidden;
+      font-weight: 300;
+      font-size: 0.85rem;
     }
   }
 
   .money {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    align-items: center;
     margin-top: 10px;
 
     .price {
@@ -43,7 +45,7 @@
       width: 40%;
       text-align: right;
       font-size: 0.9rem;
-      font-weight: 500;
+      // font-weight: 400;
     }
   }
 }
@@ -52,13 +54,85 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-
-  // border-top: dotted 1px @border-color-base;
+  margin: 10px 12px;
+  padding-top: 12px;
+  border-top: dotted 1px @border-color-base;
 
   .label {
   }
   .value {
     font-size: 0.9rem;
     font-weight: 600;
+  }
+}
+
+.cart-item {
+  display: flex;
+  flex-direction: row;
+
+  .summary {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    padding-right: 30px;
+
+    .image {
+      width: auto;
+      height: 100px;
+      border: solid 1px @border-color-base;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 20px;
+
+      h4 {
+        word-wrap: normal;
+      }
+
+      .attribute {
+        display: flex;
+        flex-direction: row;
+
+        .label {
+          font-size: 0.9rem;
+          font-weight: 300;
+        }
+
+        .value {
+          margin-left: 4px;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .money {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .price {
+      margin-bottom: 10px;
+      color: @price-color;
+    }
+  }
+}
+
+.cart-summary {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 10px;
+
+  // .label {
+  // }
+  .money {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: @price-color;
   }
 }

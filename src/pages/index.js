@@ -1,25 +1,10 @@
 import { useMemo } from "react";
-import Head from "next/head";
 import Link from "next/link";
-import NumberFormat from "react-number-format";
-import {
-  Row,
-  Col,
-  PageHeader,
-  Menu,
-  Dropdown,
-  Button,
-  message,
-  Tooltip,
-  Space,
-  Empty,
-  Pagination,
-  Divider,
-  Tag,
-} from "antd";
+import { Row, Col, Space, Pagination, Tag } from "antd";
 import { signIn, signOut, useSession } from "next-auth/client";
 
-import { useFilterProducts, useLocalStorage } from "../common/hooks";
+import { AGE_VALUES, TYPE_VALUES, COLOR_VALUES } from "../common/constants";
+import { useFilterProducts, useCart } from "../common/hooks";
 import { slugify } from "../common/utils";
 import Filter from "../components/Filter";
 import FilterRange from "../components/Filter/Range";
@@ -27,33 +12,12 @@ import ProductListSkeleton from "../components/ProductListSkeleton";
 import ProductItem from "../components/ProductItem";
 import Layout from "../components/Layout";
 import EmptyResult from "../components/EmptyResult";
+import Money from "../components/Money";
 //-----------------------------------------------
-
-const AGE_VALUES = {
-  "10k": "Vàng 10K",
-  "14k": "Vàng 14K",
-  "18k": "Vàng 18K",
-  "22k": "Vàng 22K",
-  "24k": "Vàng 24K",
-};
-
-const TYPE_VALUES = {
-  Ruby: "Đá Ruby",
-  Sapphire: "Đá Sapphire",
-  Topaz: "Đá Topaz",
-};
-
-const COLOR_VALUES = {
-  Trắng: "Màu trắng",
-  Hồng: "Màu hồng",
-  Vàng: "Màu vàng",
-  Đỏ: "Màu đỏ",
-};
 
 export default function Home({ data }) {
   const [session, loading] = useSession();
-  console.log("session", session);
-  const [cart] = useLocalStorage("cart");
+  const cart = useCart();
 
   const {
     products: filterProducts,
@@ -63,7 +27,6 @@ export default function Home({ data }) {
     setFilters,
     setPage,
   } = useFilterProducts();
-  console.log("filters", filters);
 
   const products = useMemo(() => {
     if (filterProducts) {
@@ -78,8 +41,16 @@ export default function Home({ data }) {
     setFilters({ ...filters, [attr]: values });
   };
 
+  const handleCartUpdate = (pid, quantity) => {
+    cart.updateItem(pid, quantity);
+  };
+
   return (
-    <Layout title="Vàng bạc, trang sức & đá quý" cart={cart}>
+    <Layout
+      title="Vàng bạc, trang sức & đá quý"
+      cart={cart}
+      onCartUpdate={handleCartUpdate}
+    >
       {/* {!session && (
         <>
           Not signed in <br />
@@ -87,7 +58,7 @@ export default function Home({ data }) {
         </>
       )} */}
 
-      <Row>
+      <Row style={{ marginBottom: 15 }}>
         <Space>
           <Filter
             label="Tuổi vàng"
@@ -115,80 +86,60 @@ export default function Home({ data }) {
         </Space>
       </Row>
 
-      <Row style={{ marginTop: 15, marginBottom: 15 }}>
-        {Object.keys(filters).map((attr) => filters[attr].length).length > 0 &&
-          Object.keys(filters)
-            .map((attr) => filters[attr].length)
-            .reduce((a, b) => a + b) > 0 && (
-            <>
-              <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
-              {Object.keys(filters).map((attr) => {
-                if (["age", "type", "color"].indexOf(attr) !== -1) {
-                  return filters[attr].map((v) => (
-                    <Tag
-                      key={v}
-                      closable
-                      onClose={() => handleRemoveFilterValue(attr, v)}
-                    >
-                      {attr === "age" && AGE_VALUES[v]}
-                      {attr === "type" && TYPE_VALUES[v]}
-                      {attr === "color" && COLOR_VALUES[v]}
-                    </Tag>
-                  ));
-                }
+      {Object.keys(filters).map((attr) => filters[attr].length).length > 0 &&
+        Object.keys(filters)
+          .map((attr) => filters[attr].length)
+          .reduce((a, b) => a + b) > 0 && (
+          <Row style={{ marginBottom: 15 }}>
+            <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
+            {Object.keys(filters).map((attr) => {
+              if (["age", "type", "color"].indexOf(attr) !== -1) {
+                return filters[attr].map((v) => (
+                  <Tag
+                    key={v}
+                    closable
+                    onClose={() => handleRemoveFilterValue(attr, v)}
+                  >
+                    {attr === "age" && AGE_VALUES[v]}
+                    {attr === "type" && TYPE_VALUES[v]}
+                    {attr === "color" && COLOR_VALUES[v]}
+                  </Tag>
+                ));
+              }
 
-                if (attr === "price") {
-                  let components = [];
-                  if (filters.price[0]) {
-                    components.push(
-                      <Tag
-                        key={`${attr}-from`}
-                        closable
-                        onClose={() =>
-                          handleRemoveFilterValue(attr, filters.price[0])
-                        }
-                      >
-                        Giá từ:{" "}
-                        {
-                          <NumberFormat
-                            value={filters.price[0]}
-                            displayType={"text"}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            suffix=" ₫"
-                          />
-                        }
-                      </Tag>
-                    );
-                  }
-                  if (filters.price[1]) {
-                    components.push(
-                      <Tag
-                        key={`${attr}-to`}
-                        closable
-                        onClose={() =>
-                          handleRemoveFilterValue(attr, filters.price[1])
-                        }
-                      >
-                        Giá đến:{" "}
-                        {
-                          <NumberFormat
-                            value={filters.price[1]}
-                            displayType={"text"}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            suffix=" ₫"
-                          />
-                        }
-                      </Tag>
-                    );
-                  }
-                  return components;
+              if (attr === "price") {
+                let components = [];
+                if (filters.price[0]) {
+                  components.push(
+                    <Tag
+                      key={`${attr}-from`}
+                      closable
+                      onClose={() =>
+                        handleRemoveFilterValue(attr, filters.price[0])
+                      }
+                    >
+                      Giá từ: {<Money value={filters.price[0]} />}
+                    </Tag>
+                  );
                 }
-              })}
-            </>
-          )}
-      </Row>
+                if (filters.price[1]) {
+                  components.push(
+                    <Tag
+                      key={`${attr}-to`}
+                      closable
+                      onClose={() =>
+                        handleRemoveFilterValue(attr, filters.price[1])
+                      }
+                    >
+                      Giá đến: {<Money value={filters.price[1]} />}
+                    </Tag>
+                  );
+                }
+                return components;
+              }
+            })}
+          </Row>
+        )}
 
       <div className="product-list">
         {isLoading ? (
@@ -201,10 +152,10 @@ export default function Home({ data }) {
                   {products.map((p) => (
                     <Col xs={12} sm={8} md={6} key={p.id}>
                       <Link
-                        href="/[...slug]"
-                        as={`${slugify(p.category)}/${slugify(p.title)}.p${
-                          p.id
-                        }`}
+                        href="/product/[...slug]"
+                        as={`/product/${slugify(p.category)}/${slugify(
+                          p.title
+                        )}.p${p.id}`}
                       >
                         <a>
                           <ProductItem {...p} />

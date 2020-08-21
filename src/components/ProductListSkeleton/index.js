@@ -15,12 +15,30 @@ const ProductListSkeleton = ({}) => {
               {({ width }) => (
                 <Card
                   style={{ height: width }}
-                  bodyStyle={{ height: "100%", padding: 10 }}
+                  bodyStyle={{
+                    height: "100%",
+                    padding: 10,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
                 >
-                  <Skeleton.Image className="skeleton-image" />
-                  <br />
-                  <br />
-                  <Skeleton paragraph={{ rows: 0 }} round active />
+                  <div className="product-list-skeleton-image">
+                    <Skeleton.Image />
+                  </div>
+                  <div className="product-list-skeleton-line">
+                    <Skeleton.Button
+                      size="small"
+                      shape="round"
+                      style={{ width: 200, height: 10 }}
+                      active
+                    />
+                    <Skeleton.Button
+                      size="small"
+                      shape="round"
+                      style={{ width: 100, height: 10 }}
+                      active
+                    />
+                  </div>
                 </Card>
               )}
             </ReactResizeDetector>

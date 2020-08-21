@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
-import NumberFormat from "react-number-format";
+import React, { useState } from "react";
 import { Dropdown, Card, Slider, Input } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+
+import Money from "../Money";
 
 import "./styles.less";
 //-----------------------------------------------
@@ -31,15 +32,7 @@ const FilterRange = ({ label, onChange }) => {
         step={1000}
         onChange={handleChange}
         onAfterChange={handleAfterChange}
-        tipFormatter={(value) => (
-          <NumberFormat
-            value={value}
-            displayType={"text"}
-            thousandSeparator="."
-            decimalSeparator=","
-            suffix=" ₫"
-          />
-        )}
+        tipFormatter={(value) => <Money value={value} />}
       />
       <div className="range-input-wrap">
         <Input.Group compact>

@@ -10,7 +10,7 @@ const Image = ({ src, alt }) => {
   return (
     <VisibilitySensor>
       <Img
-        className="image"
+        className="m-image"
         src={src}
         alt={alt}
         crossOrigin="anonymous"

@@ -1,7 +1,8 @@
 import React from "react";
-import NumberFormat from "react-number-format";
-import { Space, Button, Rate, InputNumber } from "antd";
+import { Space, Button, Rate, InputNumber, Divider } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+
+import Money from "../Money";
 
 import "./styles.less";
 //-----------------------------------------------
@@ -16,22 +17,22 @@ const ProductDetailInfo = ({
   return (
     <div className="product-detail-info">
       <h4>{title}</h4>
-      <Rate defaultValue={3} />
-      <InputNumber
-        size="large"
-        min={1}
-        defaultValue={1}
-        onChange={onSelectedQuantity}
-        style={{ width: 60 }}
-      />
-      <div className="price">
-        <NumberFormat
-          value={price}
-          displayType={"text"}
-          thousandSeparator="."
-          decimalSeparator=","
-          suffix=" ₫"
+      <div className="rate">
+        <Rate defaultValue={4} />
+      </div>
+      <Divider />
+      <div className="quantity">
+        <InputNumber
+          size="large"
+          min={1}
+          defaultValue={1}
+          onChange={onSelectedQuantity}
+          style={{ width: 60 }}
         />
+      </div>
+
+      <div className="price">
+        <Money value={price} />
       </div>
 
       <Space>
@@ -43,7 +44,13 @@ const ProductDetailInfo = ({
         >
           Thêm vào giỏ hàng
         </Button>
-        <Button type="danger" shape="round" size="large" onClick={buyNow}>
+        <Button
+          type="danger"
+          shape="round"
+          size="large"
+          className="buy-now"
+          onClick={buyNow}
+        >
           Mua ngay
         </Button>
       </Space>
