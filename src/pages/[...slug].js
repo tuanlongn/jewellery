@@ -1,12 +1,12 @@
-import { useCallback } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Row, Col, Descriptions, Breadcrumb } from "antd";
+import { Row, Col, Descriptions, Breadcrumb, message } from "antd";
 
+import { useProduct, useLocalStorage } from "../common/hooks";
 import Layout from "../components/Layout";
 import ProductImageSlider from "../components/ProductImageSlider";
 import ProductDetailInfo from "../components/ProductDetailInfo";
-import { useProduct } from "../common/hooks";
 //-----------------------------------------------
 
 export default function Product({ data }) {
@@ -16,8 +16,24 @@ export default function Product({ data }) {
 
   const { product, isLoading, isError } = useProduct(id);
 
+  const [cart, setCartValue] = useLocalStorage("cart", { items: {} });
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  const handleSelectedQuantity = (value) => {
+    setSelectedQuantity(value);
+  };
+
   const handleAddToCart = (item) => {
-    console.log("item", item);
+    if (cart.items[item.id]) {
+      cart.items[item.id].quantity += selectedQuantity;
+    } else {
+      cart.items[item.id] = {
+        ...item,
+        quantity: selectedQuantity,
+      };
+    }
+    setCartValue(cart);
+    message.success(`Bạn vừa thêm sản phẩm vào giỏ hàng`);
   };
 
   const handleBuyNow = useCallback(() => {
@@ -25,7 +41,10 @@ export default function Product({ data }) {
   }, [product]);
 
   return (
-    <Layout title={`${data?.title || ""} | ${data?.category || ""}`}>
+    <Layout
+      title={`${data?.title || ""} | ${data?.category || ""}`}
+      cart={cart}
+    >
       <div className="product-detail" style={{ backgroundColor: "white" }}>
         <Row>
           <Breadcrumb>
@@ -46,6 +65,7 @@ export default function Product({ data }) {
             <ProductDetailInfo
               {...data}
               {...product}
+              onSelectedQuantity={handleSelectedQuantity}
               addToCart={() => handleAddToCart({ ...data, ...product })}
               buyNow={handleBuyNow}
             />

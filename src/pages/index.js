@@ -19,7 +19,7 @@ import {
 } from "antd";
 import { signIn, signOut, useSession } from "next-auth/client";
 
-import { useFilterProducts } from "../common/hooks";
+import { useFilterProducts, useLocalStorage } from "../common/hooks";
 import { slugify } from "../common/utils";
 import Filter from "../components/Filter";
 import FilterRange from "../components/Filter/Range";
@@ -53,6 +53,7 @@ const COLOR_VALUES = {
 export default function Home({ data }) {
   const [session, loading] = useSession();
   console.log("session", session);
+  const [cart] = useLocalStorage("cart");
 
   const {
     products: filterProducts,
@@ -62,6 +63,7 @@ export default function Home({ data }) {
     setFilters,
     setPage,
   } = useFilterProducts();
+  console.log("filters", filters);
 
   const products = useMemo(() => {
     if (filterProducts) {
@@ -77,13 +79,13 @@ export default function Home({ data }) {
   };
 
   return (
-    <Layout title="Vàng bạc, trang sức & đá quý">
-      {!session && (
+    <Layout title="Vàng bạc, trang sức & đá quý" cart={cart}>
+      {/* {!session && (
         <>
           Not signed in <br />
           <button onClick={signIn}>Sign in</button>
         </>
-      )}
+      )} */}
 
       <Row>
         <Space>
@@ -114,75 +116,78 @@ export default function Home({ data }) {
       </Row>
 
       <Row style={{ marginTop: 15, marginBottom: 15 }}>
-        {Object.keys(filters).length > 0 && (
-          <>
-            <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
-            {Object.keys(filters).map((attr) => {
-              if (["age", "type", "color"].indexOf(attr) !== -1) {
-                return filters[attr].map((v) => (
-                  <Tag
-                    key={v}
-                    closable
-                    onClose={() => handleRemoveFilterValue(attr, v)}
-                  >
-                    {attr === "age" && AGE_VALUES[v]}
-                    {attr === "type" && TYPE_VALUES[v]}
-                    {attr === "color" && COLOR_VALUES[v]}
-                  </Tag>
-                ));
-              }
+        {Object.keys(filters).map((attr) => filters[attr].length).length > 0 &&
+          Object.keys(filters)
+            .map((attr) => filters[attr].length)
+            .reduce((a, b) => a + b) > 0 && (
+            <>
+              <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
+              {Object.keys(filters).map((attr) => {
+                if (["age", "type", "color"].indexOf(attr) !== -1) {
+                  return filters[attr].map((v) => (
+                    <Tag
+                      key={v}
+                      closable
+                      onClose={() => handleRemoveFilterValue(attr, v)}
+                    >
+                      {attr === "age" && AGE_VALUES[v]}
+                      {attr === "type" && TYPE_VALUES[v]}
+                      {attr === "color" && COLOR_VALUES[v]}
+                    </Tag>
+                  ));
+                }
 
-              if (attr === "price") {
-                let components = [];
-                if (filters.price[0]) {
-                  components.push(
-                    <Tag
-                      key={`${attr}-from`}
-                      closable
-                      onClose={() =>
-                        handleRemoveFilterValue(attr, filters.price[0])
-                      }
-                    >
-                      Giá từ{" "}
-                      {
-                        <NumberFormat
-                          value={filters.price[0]}
-                          displayType={"text"}
-                          thousandSeparator="."
-                          decimalSeparator=","
-                          suffix=" ₫"
-                        />
-                      }
-                    </Tag>
-                  );
+                if (attr === "price") {
+                  let components = [];
+                  if (filters.price[0]) {
+                    components.push(
+                      <Tag
+                        key={`${attr}-from`}
+                        closable
+                        onClose={() =>
+                          handleRemoveFilterValue(attr, filters.price[0])
+                        }
+                      >
+                        Giá từ:{" "}
+                        {
+                          <NumberFormat
+                            value={filters.price[0]}
+                            displayType={"text"}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            suffix=" ₫"
+                          />
+                        }
+                      </Tag>
+                    );
+                  }
+                  if (filters.price[1]) {
+                    components.push(
+                      <Tag
+                        key={`${attr}-to`}
+                        closable
+                        onClose={() =>
+                          handleRemoveFilterValue(attr, filters.price[1])
+                        }
+                      >
+                        Giá đến:{" "}
+                        {
+                          <NumberFormat
+                            value={filters.price[1]}
+                            displayType={"text"}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            suffix=" ₫"
+                          />
+                        }
+                      </Tag>
+                    );
+                  }
+                  return components;
                 }
-                if (filters.price[1]) {
-                  components.push(
-                    <Tag
-                      key={`${attr}-to`}
-                      closable
-                      onClose={() =>
-                        handleRemoveFilterValue(attr, filters.price[1])
-                      }
-                    >
-                      Giá đến{" "}
-                      {
-                        <NumberFormat
-                          value={filters.price[1]}
-                          displayType={"text"}
-                          thousandSeparator="."
-                          decimalSeparator=","
-                          suffix=" ₫"
-                        />
-                      }
-                    </Tag>
-                  );
-                }
-                return components;
-              }
-            })}
-          </>
-        )}
+              })}
+            </>
+          )}
       </Row>
 
       <div className="product-list">

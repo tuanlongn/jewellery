@@ -1,0 +1,64 @@
+@import "../../styles/antd.less";
+
+.cart-item {
+  width: 280px;
+  padding: 5px 0px;
+  overflow: hidden;
+
+  .info {
+    display: flex;
+    flex-direction: row;
+
+    .image {
+      width: auto;
+      height: 70px;
+      border: solid 1px @border-color-base;
+    }
+    .title {
+      display: flex;
+      flex-grow: 1;
+      flex-wrap: wrap;
+      white-space: normal;
+      margin-left: 10px;
+      overflow: hidden;
+    }
+  }
+
+  .money {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+
+    .price {
+      color: @price-color;
+      font-size: 0.8rem;
+      width: 30%;
+    }
+    .quantity {
+      width: 30%;
+      text-align: right;
+    }
+    .total {
+      width: 40%;
+      text-align: right;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.cart-total {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  // border-top: dotted 1px @border-color-base;
+
+  .label {
+  }
+  .value {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+}

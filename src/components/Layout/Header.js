@@ -1,19 +1,27 @@
-import React from "react";
-import { Button, Tooltip } from "antd";
-import { ShoppingCartOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import {
+  Button,
+  Tooltip,
+  Dropdown,
+  Menu,
+  Divider,
+  InputNumber,
+  Badge,
+} from "antd";
 
 import "./styles.less";
+import Cart from "../Cart";
 //-----------------------------------------------
 
-const Header = ({ width }) => {
+const Header = ({ width, cart, onChangeQuantity }) => {
   return (
     <div className="header">
       <div className="container" style={{ width }}>
         <div className="logo" />
       </div>
 
-      <div className="container" style={{ width }}>
-        <ul className="nav">
+      <div className="nav" style={{ width }}>
+        <ul>
           <li>
             <a>Quà tặng cao cấp</a>
           </li>
@@ -28,10 +36,8 @@ const Header = ({ width }) => {
           </li>
         </ul>
 
-        <div className="">
-          <Tooltip title="Giỏ hàng">
-            <Button shape="circle" icon={<ShoppingCartOutlined />} />
-          </Tooltip>
+        <div className="cart">
+          <Cart items={cart.items} onChangeQuantity={onChangeQuantity} />
         </div>
       </div>
     </div>

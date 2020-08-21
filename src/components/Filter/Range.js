@@ -27,7 +27,7 @@ const FilterRange = ({ label, onChange }) => {
         range
         defaultValue={range}
         min={0}
-        max={50000000}
+        max={100000000}
         step={1000}
         onChange={handleChange}
         onAfterChange={handleAfterChange}
