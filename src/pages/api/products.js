@@ -1,5 +1,4 @@
 import { Client } from "@elastic/elasticsearch";
-import { sleep } from "../../common/utils";
 
 const client = new Client({
   node: process.env.ELASTICSEARCH_ENDPOINT,
@@ -20,7 +19,7 @@ export default (req, res) => {
   });
 
   return new Promise((resolve) => {
-    fetchDataWithDelay({ filters, page })
+    fetchData({ filters, page })
       .then((data) => {
         res.statusCode = 200;
         res.json(data);
@@ -33,14 +32,6 @@ export default (req, res) => {
         resolve();
       });
   });
-};
-
-const fetchDataWithDelay = async ({ filters, page }) => {
-  const [data, _] = await Promise.all([
-    fetchData({ filters, page }),
-    sleep(1000),
-  ]);
-  return data;
 };
 
 const fetchData = async ({ filters, page }) => {
