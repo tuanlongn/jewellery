@@ -29,7 +29,11 @@ const Header = ({ width, cart }) => {
 
         <div className="cart">
           {cart && (
-            <Cart items={cart.items} onChangeQuantity={cart.updateItem} />
+            <Cart
+              items={cart.items}
+              onChangeQuantity={cart.updateItem}
+              onRemoveItem={cart.removeItem}
+            />
           )}
         </div>
       </div>

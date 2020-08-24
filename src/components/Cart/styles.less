@@ -5,6 +5,11 @@
   padding: 5px 0px;
   overflow: hidden;
 
+  .close-button {
+    position: absolute;
+    right: 10px;
+  }
+
   .info {
     display: flex;
     flex-direction: row;
@@ -20,6 +25,7 @@
       flex-wrap: wrap;
       white-space: normal;
       margin-left: 10px;
+      margin-right: 20px;
       overflow: hidden;
       font-weight: 300;
       font-size: 0.85rem;
@@ -73,8 +79,6 @@
   .summary {
     display: flex;
     flex-direction: row;
-    flex-grow: 1;
-    padding-right: 30px;
 
     .image {
       width: auto;
@@ -105,11 +109,16 @@
           font-size: 0.9rem;
         }
       }
+
+      .action {
+        margin-top: 25px;
+      }
     }
   }
 
   .money {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
     align-items: flex-end;
 
@@ -128,8 +137,6 @@
 
   margin-bottom: 10px;
 
-  // .label {
-  // }
   .money {
     font-size: 1.2rem;
     font-weight: 500;

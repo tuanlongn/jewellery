@@ -13,6 +13,12 @@ const client = new Client({
 const indexKey = "products";
 
 const sources = {
+  category: {
+    "Trang sức cưới":
+      "https://www.pnj.com.vn/trang-suc-cuoi/san-pham-theo-bo/?features_hash=",
+    "Quà tặng phong thuỷ":
+      "https://www.pnj.com.vn/qt-doanh-nghiep/qua-tang-phong-thuy/",
+  },
   age: {
     "10k":
       "https://www.pnj.com.vn/bong-tai/bong-tai-vang/?features_hash=54-19975",

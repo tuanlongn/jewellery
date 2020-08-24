@@ -36,9 +36,10 @@ export default function Product({ data }) {
     message.success(`Bạn vừa thêm sản phẩm vào giỏ hàng`);
   };
 
-  const handleBuyNow = useCallback(() => {
-    alert("buynow");
-  }, [product]);
+  const handleBuyNow = (item) => {
+    cart.addItem(item, selectedQuantity);
+    router.push("/checkout/shipping");
+  };
 
   return (
     <Layout
@@ -46,7 +47,7 @@ export default function Product({ data }) {
       cart={cart}
     >
       <Card className="product-detail" style={{ backgroundColor: "white" }}>
-        <Row>
+        <Row style={{ marginBottom: 15 }}>
           <Breadcrumb>
             <Breadcrumb.Item>Trang chủ</Breadcrumb.Item>
             <Breadcrumb.Item>
@@ -55,11 +56,9 @@ export default function Product({ data }) {
             <Breadcrumb.Item>{data?.title}</Breadcrumb.Item>
           </Breadcrumb>
         </Row>
-        <Row>
+        <Row gutter={[10, 10]}>
           <Col xs={24} md={12}>
-            <ProductImageSlider
-              images={data?.image ? [data.image, data.image, data.image] : []}
-            />
+            <ProductImageSlider images={data?.image ? [data.image] : []} />
           </Col>
           <Col xs={24} md={12}>
             <ProductDetailInfo
@@ -67,7 +66,7 @@ export default function Product({ data }) {
               {...product}
               onSelectedQuantity={handleSelectedQuantity}
               addToCart={() => handleAddToCart({ ...data, ...product })}
-              buyNow={handleBuyNow}
+              buyNow={() => handleBuyNow({ ...data, ...product })}
             />
           </Col>
         </Row>

@@ -49,6 +49,7 @@ const ProductDetailInfo = ({
           shape="round"
           size="large"
           className="buy-now"
+          style={{ width: 200 }}
           onClick={buyNow}
         >
           Mua ngay

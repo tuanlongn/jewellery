@@ -18,4 +18,12 @@ export const slugify = (text) => {
     .replace(/-+$/, ""); // Trim - from end of text
 };
 
+export const removeAccents = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+};
+
 export const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
