@@ -118,6 +118,12 @@ export default function Product({ data }) {
 //   return { props: { data: json.data } };
 // }
 
+// export async function getServerSideProps() {
+//   const res = await fetch(`${process.env.HOST}/api/product/${id}`);
+//   const json = await res.json();
+//   return { props: { data: json.data } };
+// }
+
 const getProductId = (slug) => {
   if (!slug || slug.length === 0) {
     return null;

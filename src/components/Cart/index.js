@@ -36,7 +36,10 @@ const Cart = ({ items, onChangeQuantity, onRemoveItem }) => {
                   <div className="cart-popup-item">
                     <CloseCircleOutlined
                       className="close-button"
-                      onClick={() => onRemoveItem(p.id)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onRemoveItem(p.id);
+                      }}
                     />
                     <div className="info">
                       <div className="image">

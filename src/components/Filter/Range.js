@@ -57,6 +57,7 @@ const FilterRange = ({ label, onChange }) => {
 
   return (
     <Dropdown.Button
+      size="large"
       icon={<DownOutlined />}
       overlay={list}
       placement="bottomRight"

@@ -49,6 +49,7 @@ const Filter = ({ label, values, selected, onChange }) => {
 
   return (
     <Dropdown.Button
+      size="large"
       icon={<DownOutlined />}
       overlay={list}
       placement="bottomRight"

@@ -55,8 +55,25 @@ export const useProduct = (id) => {
 };
 
 export const useFilterProducts = () => {
-  const [filters, setFilters] = useState({});
+  const [filters, _setFilters] = useState({});
   const [page, setPage] = useState(1);
+
+  const setFilters = (value) => {
+    _setFilters(value);
+    setPage(1);
+  };
+
+  const removeFilterValue = (attr, value) => {
+    const _filters = { ...filters };
+    const values = _filters[attr];
+    if (Array.isArray(values)) {
+      values.splice(values.indexOf(value), 1);
+      setFilters({ ...filters, [attr]: values });
+    } else if (typeof values === "string" || values instanceof String) {
+      delete _filters[attr];
+      setFilters(_filters);
+    }
+  };
 
   const { data, error } = useSWR(() => {
     let query = "";
@@ -65,8 +82,15 @@ export const useFilterProducts = () => {
       if (query) {
         query += "&";
       }
-      if (filters[key]?.length > 0) {
+      if (Array.isArray(filters[key]) && filters[key].length > 0) {
         query += `${key}=${filters[key].join(",")}`;
+      } else if (
+        typeof filters[key] === "string" ||
+        filters[key] instanceof String
+      ) {
+        if (filters[key] !== "") {
+          query += `${key}=${filters[key]}`;
+        }
       }
     });
 
@@ -82,6 +106,7 @@ export const useFilterProducts = () => {
   return {
     filters,
     setFilters,
+    removeFilterValue,
     setPage,
     products: data?.data,
     pagination: data?.pagination,

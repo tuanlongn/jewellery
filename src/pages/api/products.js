@@ -78,8 +78,15 @@ const fetchData = async ({ filters, page }) => {
       },
     });
   }
-
-  console.log("q___", JSON.stringify(q));
+  // keyword
+  if (filters.keyword) {
+    q.push({
+      query_string: {
+        query: filters.keyword.join(" "),
+        fields: ["title", "category", "age", "type", "color"],
+      },
+    });
+  }
 
   const pageSize = 24;
 

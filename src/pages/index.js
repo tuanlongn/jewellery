@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import Link from "next/link";
-import { Row, Col, Space, Pagination, Tag } from "antd";
+import { Row, Col, Space, Pagination, Tag, Input } from "antd";
 import { signIn, signOut, useSession } from "next-auth/client";
 
 import { AGE_VALUES, TYPE_VALUES, COLOR_VALUES } from "../common/constants";
@@ -25,6 +25,7 @@ export default function Home({ data }) {
     isLoading,
     filters,
     setFilters,
+    removeFilterValue,
     setPage,
   } = useFilterProducts();
 
@@ -34,12 +35,6 @@ export default function Home({ data }) {
     }
     return data;
   }, [filterProducts]);
-
-  const handleRemoveFilterValue = (attr, value) => {
-    const values = filters[attr];
-    values.splice(values.indexOf(value), 1);
-    setFilters({ ...filters, [attr]: values });
-  };
 
   const handleCartUpdate = (pid, quantity) => {
     cart.updateItem(pid, quantity);
@@ -83,6 +78,13 @@ export default function Home({ data }) {
             label="Khoảng giá"
             onChange={(value) => setFilters({ ...filters, price: value })}
           />
+
+          <Input.Search
+            size="large"
+            allowClear
+            // value={filters.keyword}
+            onSearch={(value) => setFilters({ ...filters, keyword: value })}
+          />
         </Space>
       </Row>
 
@@ -98,7 +100,7 @@ export default function Home({ data }) {
                   <Tag
                     key={v}
                     closable
-                    onClose={() => handleRemoveFilterValue(attr, v)}
+                    onClose={() => removeFilterValue(attr, v)}
                   >
                     {attr === "age" && AGE_VALUES[v]}
                     {attr === "type" && TYPE_VALUES[v]}
@@ -114,9 +116,7 @@ export default function Home({ data }) {
                     <Tag
                       key={`${attr}-from`}
                       closable
-                      onClose={() =>
-                        handleRemoveFilterValue(attr, filters.price[0])
-                      }
+                      onClose={() => removeFilterValue(attr, filters.price[0])}
                     >
                       Giá từ: {<Money value={filters.price[0]} />}
                     </Tag>
@@ -127,15 +127,25 @@ export default function Home({ data }) {
                     <Tag
                       key={`${attr}-to`}
                       closable
-                      onClose={() =>
-                        handleRemoveFilterValue(attr, filters.price[1])
-                      }
+                      onClose={() => removeFilterValue(attr, filters.price[1])}
                     >
                       Giá đến: {<Money value={filters.price[1]} />}
                     </Tag>
                   );
                 }
                 return components;
+              }
+
+              if (attr === "keyword") {
+                return (
+                  <Tag
+                    key={filters[attr]}
+                    closable
+                    onClose={() => removeFilterValue(attr, filters[attr])}
+                  >
+                    Từ khoá: {filters[attr]}
+                  </Tag>
+                );
               }
             })}
           </Row>
