@@ -24,6 +24,7 @@
     "react-dom": "16.13.1",
     "react-hook-form": "^6.5.0",
     "react-image": "^4.0.3",
+    "react-inner-image-zoom": "^1.1.1",
     "react-number-format": "^4.4.1",
     "react-resize-detector": "^5.0.7",
     "react-visibility-sensor": "^5.1.1",

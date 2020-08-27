@@ -1,18 +1,18 @@
-import { useMemo } from "react";
-import Link from "next/link";
-import { Row, Col, Space, Pagination, Tag, Input } from "antd";
-import { signIn, signOut, useSession } from "next-auth/client";
+import { useMemo } from 'react';
+import Link from 'next/link';
+import { Row, Col, Space, Pagination, Tag, Input } from 'antd';
+import { signIn, signOut, useSession } from 'next-auth/client';
 
-import { AGE_VALUES, TYPE_VALUES, COLOR_VALUES } from "../common/constants";
-import { useFilterProducts, useCart } from "../common/hooks";
-import { slugify } from "../common/utils";
-import Filter from "../components/Filter";
-import FilterRange from "../components/Filter/Range";
-import ProductListSkeleton from "../components/ProductListSkeleton";
-import ProductItem from "../components/ProductItem";
-import Layout from "../components/Layout";
-import EmptyResult from "../components/EmptyResult";
-import Money from "../components/Money";
+import { AGE_VALUES, TYPE_VALUES, COLOR_VALUES } from '../common/constants';
+import { useFilterProducts, useCart } from '../common/hooks';
+import { slugify } from '../common/utils';
+import Filter from '../components/Filter';
+import FilterRange from '../components/Filter/Range';
+import ProductListSkeleton from '../components/ProductListSkeleton';
+import ProductItem from '../components/ProductItem';
+import Layout from '../components/Layout';
+import EmptyResult from '../components/EmptyResult';
+import Money from '../components/Money';
 //-----------------------------------------------
 
 export default function Home({ data }) {
@@ -95,21 +95,21 @@ export default function Home({ data }) {
           <Row style={{ marginBottom: 15 }}>
             <span style={{ marginRight: 10 }}>Lọc dữ liệu:</span>
             {Object.keys(filters).map((attr) => {
-              if (["age", "type", "color"].indexOf(attr) !== -1) {
+              if (['age', 'type', 'color'].indexOf(attr) !== -1) {
                 return filters[attr].map((v) => (
                   <Tag
                     key={v}
                     closable
                     onClose={() => removeFilterValue(attr, v)}
                   >
-                    {attr === "age" && AGE_VALUES[v]}
-                    {attr === "type" && TYPE_VALUES[v]}
-                    {attr === "color" && COLOR_VALUES[v]}
+                    {attr === 'age' && AGE_VALUES[v]}
+                    {attr === 'type' && TYPE_VALUES[v]}
+                    {attr === 'color' && COLOR_VALUES[v]}
                   </Tag>
                 ));
               }
 
-              if (attr === "price") {
+              if (attr === 'price') {
                 let components = [];
                 if (filters.price[0]) {
                   components.push(
@@ -136,7 +136,7 @@ export default function Home({ data }) {
                 return components;
               }
 
-              if (attr === "keyword") {
+              if (attr === 'keyword') {
                 return (
                   <Tag
                     key={filters[attr]}
@@ -179,10 +179,10 @@ export default function Home({ data }) {
                     <div
                       className="pagination"
                       style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         marginTop: 20,
                       }}
                     >

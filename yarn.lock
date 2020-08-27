@@ -5287,6 +5287,11 @@ react-image@^4.0.3:
   resolved "https://registry.yarnpkg.com/react-image/-/react-image-4.0.3.tgz#6fa722877660b67295298a914bff1ed87ad2cf83"
   integrity sha512-19MUK9u1qaw9xys8XEsVkSpVhHctEBUeYFvrLTe1PN+4w5Co13AN2WA7xtBshPM6SthsOj77SlDrEAeOaJpf7g==
 
+react-inner-image-zoom@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-inner-image-zoom/-/react-inner-image-zoom-1.1.1.tgz#f261f57762a9ca8fc47b6975257efc929111f08b"
+  integrity sha512-+SlQ0vS+9PyMMqDjlPfv3LPJmyTpZAjLnbc7OxmrJ2mmcYS1sRe13ty3rntkVxya4VPEfMJr+AVQL8J0JXtjMw==
+
 react-is@16.13.1, react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"

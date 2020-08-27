@@ -19,10 +19,10 @@ import ProductDetailInfo from "../../components/ProductDetailInfo";
 
 export default function Product({ data }) {
   const router = useRouter();
-  const { slug } = router.query;
-  const id = getProductId(slug || []);
+  // const { slug } = router.query;
+  // const id = getProductId(slug || []);
 
-  const { product, isLoading, isError } = useProduct(id);
+  // const { product, isLoading, isError } = useProduct(id);
 
   const cart = useCart();
   const [selectedQuantity, setSelectedQuantity] = useState(1);
@@ -63,10 +63,9 @@ export default function Product({ data }) {
           <Col xs={24} md={12}>
             <ProductDetailInfo
               {...data}
-              {...product}
               onSelectedQuantity={handleSelectedQuantity}
-              addToCart={() => handleAddToCart({ ...data, ...product })}
-              buyNow={() => handleBuyNow({ ...data, ...product })}
+              addToCart={() => handleAddToCart({ ...data })}
+              buyNow={() => handleBuyNow({ ...data })}
             />
           </Col>
         </Row>
@@ -93,36 +92,15 @@ export default function Product({ data }) {
   );
 }
 
-// export async function getStaticPaths() {
-//   const res = await fetch(`${process.env.HOST}/api/getAllProductIds`);
-//   const json = await res.json();
+export async function getServerSideProps(context) {
+  const { params } = context;
+  const { slug } = params;
+  const id = getProductId(slug || []);
 
-//   const paths = json.data.map((id) => ({
-//     params: {
-//       slug: ["_category", `_product.p${id}`],
-//     },
-//   }));
-
-//   return {
-//     paths,
-//     fallback: true,
-//   };
-// }
-
-// export async function getStaticProps({ params }) {
-//   const { slug } = params;
-//   const id = getProductId(slug);
-//   const res = await fetch(`${process.env.HOST}/api/product/${id}`);
-//   const json = await res.json();
-
-//   return { props: { data: json.data } };
-// }
-
-// export async function getServerSideProps() {
-//   const res = await fetch(`${process.env.HOST}/api/product/${id}`);
-//   const json = await res.json();
-//   return { props: { data: json.data } };
-// }
+  const res = await fetch(`${process.env.HOST}/api/product/${id}`);
+  const json = await res.json();
+  return { props: { data: json.data } };
+}
 
 const getProductId = (slug) => {
   if (!slug || slug.length === 0) {
