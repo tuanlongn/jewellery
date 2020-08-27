@@ -20,7 +20,36 @@ const ProductDetailInfo = ({
       <div className="rate">
         <Rate defaultValue={4} />
       </div>
+
       <Divider />
+
+      <div className="variant">
+        <div className="variant-attribute">
+          <div className="label">Màu sắc</div>
+          <Space>
+            <Button shape="circle" style={{ backgroundColor: "#E91E63" }}>
+              {" "}
+            </Button>
+            <Button shape="circle" style={{ backgroundColor: "#FFC107" }}>
+              {" "}
+            </Button>
+            <Button shape="circle" style={{ backgroundColor: "#cacacaa6" }}>
+              {" "}
+            </Button>
+          </Space>
+        </div>
+        <div className="variant-attribute">
+          <div className="label">Kích thước</div>
+          <Space>
+            {[16, 17, 18, 19, 20].map((size) => (
+              <Button key={size.toString()}>{size}</Button>
+            ))}
+          </Space>
+        </div>
+      </div>
+
+      <Divider />
+
       <div className="quantity">
         <InputNumber
           size="large"
